@@ -2,6 +2,7 @@
 #include "pch.h"
 #include <Minhook.h>
 #include <thread>
+#include <cstring>
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -43,6 +44,15 @@ __int64 __fastcall ConvarSetupHook(__int64 a1, __int64 a2)
     return ((cl_cvar)origConvarSetup)(a1, a2);
 }
 
+static const char* GetCommandLineParam(const char* commandline, const char* match) {
+	const char* paramStart = strstr(commandline, match);
+	if (!paramStart) return nullptr;
+	// Is there something after this parameter that's not a space or null terminator?
+	// If not, then this is part of a longer command
+	const char lastChar = *(paramStart + strlen(match));
+	if (!(lastChar == 0 || lastChar == ' ')) return nullptr;
+	return paramStart;	
+}
 EXTERN_DLL_EXPORT void __fastcall Source2Main(HINSTANCE a, HINSTANCE b, LPWSTR c, long long d, const char* e, const char* f)
 {
     auto lib2 = LoadLibraryExA("vstdlib.dll", NULL, 8);
@@ -56,9 +66,9 @@ EXTERN_DLL_EXPORT void __fastcall Source2Main(HINSTANCE a, HINSTANCE b, LPWSTR c
 
     char* line = GetCommandLineA();
 
-    if (!strstr(line, "-dedicated"))
+    if (!GetCommandLineParam(line, "-dedicated"))
     {
-        if (!strstr(line, "-vr"))
+        if (!GetCommandLineParam(line, "-vr"))
         {
             //0x103760
             MH_CreateHook((LPVOID)(((unsigned long long)lib) + 0x103721 + strlen(message)), &VRInitHook, &origVRInit);
@@ -72,8 +82,8 @@ EXTERN_DLL_EXPORT void __fastcall Source2Main(HINSTANCE a, HINSTANCE b, LPWSTR c
         MH_EnableHook((LPVOID)(((unsigned long long)lib) + 0x63691 + strlen(message)));
     }
     
-    auto modParam = strstr(line, "-game ");
-    if (modParam != 0)
+    const char* modParam = GetCommandLineParam(line, "-game ");
+    if (modParam)
     {
         modParam += 6;
 
