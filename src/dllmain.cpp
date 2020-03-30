@@ -12,7 +12,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 }
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-const char* message = "Created by Jan4V, do not redistribute without prior permission.";
+const char* message = "Created by Jan4V, half-life:alyx only, not other source 2 games";
 
 typedef void(__fastcall* source2)(HINSTANCE, HINSTANCE, LPWSTR, long long, const char*, const char*);
 typedef char(__fastcall* vrinit)(char*);
