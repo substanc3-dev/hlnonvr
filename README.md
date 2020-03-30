@@ -1,6 +1,8 @@
 # hlnonvr
 Run FPS-style Non-VR mods on top of Source2 (targets Half-Life: Alyx)
 
+Installation tutorial on YouTube: https://youtu.be/xsWK7gswv60 
+
 -----
 
  - Adds non-vr support to modern versions of the game
