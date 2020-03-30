@@ -82,24 +82,31 @@ EXTERN_DLL_EXPORT void __fastcall Source2Main(HINSTANCE a, HINSTANCE b, LPWSTR c
         MH_EnableHook((LPVOID)(((unsigned long long)lib) + 0x63691 + strlen(message)));
     }
     
-    const char* modParam = GetCommandLineParam(line, "-game ");
+    const char* modParam = strstr(line, "-game ");
     if (modParam)
     {
         modParam += 6;
 
-        auto len = strchr(modParam, ' ');
+		const char* strEnd = nullptr;
+		if (*modParam == '\"') {
+			modParam++;
+			strEnd = strchr(modParam, '\"');
+		}
+		else {
+			strEnd = strchr(modParam, ' ');
+			if (!strEnd) strEnd = modParam + strlen(modParam) + 1;
+		}
 
-        if (len == 0)
-            len = modParam + strlen(modParam) + 1;
+		if (strEnd) {
+			char* modname = new char[(int)(strEnd - modParam) + 1];
 
-        char* modname = new char[(int)(len - modParam) + 1];
+			memcpy(modname, modParam, (int)(strEnd - modParam));
+			modname[(int)(strEnd - modParam)] = '\0';
 
-        memcpy(modname, modParam, (int)(len - modParam));
-        modname[(int)(len - modParam)] = '\0';
-
-        init(a, b, c, d, e, modname);
+			init(a, b, c, d, e, modname);
+			return;
+		}  
     }
-    else
-        init(a, b, c, d, e, f);
+    init(a, b, c, d, e, f);
 
 }
