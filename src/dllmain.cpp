@@ -79,6 +79,9 @@ EXTERN_DLL_EXPORT void __fastcall Source2Main(HINSTANCE a, HINSTANCE b, LPWSTR c
 
         auto len = strchr(modParam, ' ');
 
+        if (len == 0)
+            len = modParam + strlen(modParam) + 1;
+
         char* modname = new char[(int)(len - modParam) + 1];
 
         memcpy(modname, modParam, (int)(len - modParam));
