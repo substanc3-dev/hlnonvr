@@ -31,7 +31,7 @@ char __fastcall VRInitHook(char* settings)
 }
 __int64 __fastcall DedicatedServerHook(__int64 rcx, __int64 rdx, __int64 r8)
 {
-    *(DWORD*)(rdx + 100) = 64; //MaxMaxPlayers = 64;
+    *(DWORD*)(rdx + 100) = 33; //MaxMaxPlayers = 33;
     *(char*)(rdx + 88) = 1; //SteamMode = true;
 
     char* line = GetCommandLineA();
