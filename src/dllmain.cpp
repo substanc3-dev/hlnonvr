@@ -33,6 +33,14 @@ __int64 __fastcall DedicatedServerHook(__int64 rcx, __int64 rdx, __int64 r8)
 {
     *(DWORD*)(rdx + 100) = 64; //MaxMaxPlayers = 64;
     *(char*)(rdx + 88) = 1; //SteamMode = true;
+
+    char* line = GetCommandLineA();
+
+    if (const char* param = strstr(line, "-maxplayers "))
+    {
+        int maxplayers = atoi(param + 12);
+        *(DWORD*)(rdx + 96) = maxplayers; //MaxPlayers = maxplayers;
+    }
     
     return ((dedicatedinit)origDedicatedServer)(rcx, rdx, r8);
 }
