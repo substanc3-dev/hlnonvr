@@ -52,6 +52,23 @@ __int64 __fastcall ConvarSetupHook(__int64 a1, __int64 a2)
     return ((cl_cvar)origConvarSetup)(a1, a2);
 }
 
+void ServerDLLPatches()
+{
+    HMODULE server = 0;
+    do {
+        server = GetModuleHandleA("server.dll");
+    } while (!server);
+
+    auto curr = GetCurrentProcess();
+
+    const char patch1[7] = { 0xB9, 0x00, 0x00, 0x00, 0x00, 0x90, 0x90 };
+    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x778ABB), patch1, 7, NULL);
+    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x773B27), patch1, 7, NULL);
+
+    const char patch2[3] = { 0x78, 0xC6, 0x2F };
+    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x778AB4), patch2, 3, NULL);
+}
+
 static const char* GetCommandLineParam(const char* commandline, const char* match) {
 	const char* paramStart = strstr(commandline, match);
 	if (!paramStart) return nullptr;
@@ -88,6 +105,9 @@ EXTERN_DLL_EXPORT void __fastcall Source2Main(HINSTANCE a, HINSTANCE b, LPWSTR c
         //0x636D0
         MH_CreateHook((LPVOID)(((unsigned long long)lib) + 0x63691 + strlen(message)), &DedicatedServerHook, &origDedicatedServer);
         MH_EnableHook((LPVOID)(((unsigned long long)lib) + 0x63691 + strlen(message)));
+
+        std::thread t(&ServerDLLPatches);
+        t.detach();
     }
     
     const char* modParam = strstr(line, "-game ");
