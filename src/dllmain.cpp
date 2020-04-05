@@ -64,6 +64,7 @@ void ServerDLLPatches()
     const char patch1[7] = { 0xB9, 0x00, 0x00, 0x00, 0x00, 0x90, 0x90 };
     WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x778ABB), patch1, 7, NULL);
     WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x773B27), patch1, 7, NULL);
+    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x773E67), patch1, 7, NULL);
 
     const char patch2[3] = { 0x78, 0xC6, 0x2F };
     WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x778AB4), patch2, 3, NULL);
