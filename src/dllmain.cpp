@@ -59,15 +59,19 @@ void ServerDLLPatches()
         server = GetModuleHandleA("server.dll");
     } while (!server);
 
+    //TODO: Fix older versions
+
     auto curr = GetCurrentProcess();
 
     const char patch1[7] = { 0xB9, 0x00, 0x00, 0x00, 0x00, 0x90, 0x90 };
-    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x778ABB), patch1, 7, NULL);
-    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x773B27), patch1, 7, NULL);
-    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x773E67), patch1, 7, NULL);
+    // 0x778ABB, 0x773B27, 0x773E67
+    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x77911B), patch1, 7, NULL);
+    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x774187), patch1, 7, NULL);
+    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x7744C7), patch1, 7, NULL);
 
     const char patch2[3] = { 0x78, 0xC6, 0x2F };
-    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x778AB4), patch2, 3, NULL);
+    // 0x778AB4
+    WriteProcessMemory(curr, (void*)(((unsigned long long)server) + 0x779114), patch2, 3, NULL);
 }
 
 static const char* GetCommandLineParam(const char* commandline, const char* match) {
@@ -97,15 +101,17 @@ EXTERN_DLL_EXPORT void __fastcall Source2Main(HINSTANCE a, HINSTANCE b, LPWSTR c
         if (!GetCommandLineParam(line, "-vr"))
         {
             //0x103760
-            MH_CreateHook((LPVOID)(((unsigned long long)lib) + 0x103721 + strlen(message)), &VRInitHook, &origVRInit);
-            MH_EnableHook((LPVOID)(((unsigned long long)lib) + 0x103721 + strlen(message)));
+            //TODO: Fix older versions
+            MH_CreateHook((LPVOID)(((unsigned long long)lib) + 0x103650), &VRInitHook, &origVRInit);
+            MH_EnableHook((LPVOID)(((unsigned long long)lib) + 0x103650));
         }
     }
     else
     {
         //0x636D0
-        MH_CreateHook((LPVOID)(((unsigned long long)lib) + 0x63691 + strlen(message)), &DedicatedServerHook, &origDedicatedServer);
-        MH_EnableHook((LPVOID)(((unsigned long long)lib) + 0x63691 + strlen(message)));
+        //TODO: Fix older versions
+        MH_CreateHook((LPVOID)(((unsigned long long)lib) + 0x636F0), &DedicatedServerHook, &origDedicatedServer);
+        MH_EnableHook((LPVOID)(((unsigned long long)lib) + 0x636F0));
 
         std::thread t(&ServerDLLPatches);
         t.detach();
